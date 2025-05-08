@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   messageTitle: {
     textAlign: "center",
     color: "red",
-    fontSize: "16px"
+    fontSize: "16px",
   },
   messageDate: {
     textAlign: "center",
@@ -39,31 +39,36 @@ const useStyles = makeStyles((theme) => ({
     color: "red",
   },
   messageNotice: {
-    fontSize: "16px"
-  }
+    fontSize: "16px",
+  },
 }));
 
 const HomePageContainer = () => {
   const modulesManager = useModulesManager();
   const userHealthFacility = useSelector(
-    (state) => state?.loc?.userHealthFacilityFullPath
+    (state) => state?.loc?.userHealthFacilityFullPath,
   );
   const { formatMessage, formatMessageWithValues, formatDateFromISO } =
     useTranslations(MODULE_NAME, modulesManager);
+  const showWelcomeMessage = modulesManager.getConf(
+    "fe-home",
+    "HomePageContainer.showWelcomeMessage",
+    DEFAULT.SHOW_WELCOME_MESSAGE,
+  );
   const showHomeMessage = modulesManager.getConf(
     "fe-home",
     "HomePageContainer.showHomeMessage",
-    DEFAULT.SHOW_HOME_MESSAGE
+    DEFAULT.SHOW_HOME_MESSAGE,
   );
   const homeMessageURL = modulesManager.getConf(
     "fe-home",
     "HomePageContainer.homeMessageURL",
-    DEFAULT.HOME_MESSAGE_URL
+    DEFAULT.HOME_MESSAGE_URL,
   );
   const showHealthFacilityMessage = modulesManager.getConf(
     "fe-home",
     "HomePageContainer.showHealthFacilityMessage",
-    DEFAULT.SHOW_HEALTH_FACILITY_MESSAGE
+    DEFAULT.SHOW_HEALTH_FACILITY_MESSAGE,
   );
 
   const { user } = useUserQuery();
@@ -92,7 +97,7 @@ const HomePageContainer = () => {
 
   return (
     <Grid container className={classes.container} spacing={2}>
-      <Grid item xs={12}>
+      {showWelcomeMessage && (<Grid item xs={12}>
         <Box mt={2}>
           <Typography variant="h4">
             {formatMessageWithValues("HomePageContainer.welcomeMessage", {
@@ -101,18 +106,18 @@ const HomePageContainer = () => {
             })}
           </Typography>
         </Box>
-      </Grid>
+      </Grid>)}
       {showHealthFacilityMessage && (
         <Grid item xs={12}>
           <h2 className={getHealthFacilityStatus(timeDelta)}>
             {userHealthFacility
               ? formatMessageWithValues(
-                  "HomePageContainer.healthFacilityStatus",
-                  {
-                    date: `${formatDateFromISO(dateToCheck)}`,
-                    days: `${timeDelta}`,
-                  }
-                )
+                "HomePageContainer.healthFacilityStatus",
+                {
+                  date: `${formatDateFromISO(dateToCheck)}`,
+                  days: `${timeDelta}`,
+                },
+              )
               : formatMessage("HomePageContainer.noHealthFacilityAssigned")}
           </h2>
         </Grid>
